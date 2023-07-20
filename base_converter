@@ -130,7 +130,7 @@ int main() {
 
  
 
-  base_b<37> X(x), Y(y), Z(z);
+  base_b<37> X(x), Y(y), Z(z);      //Change the base here.
 
   cout << "(x + y) * z = " << (X + Y) * Z << endl;
   cout << "x++ = " << X++ << endl;
