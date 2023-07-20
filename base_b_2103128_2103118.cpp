@@ -1,0 +1,143 @@
+/*		RACHAMALLA HINDUSREE-2103128
+		AMRUTHA SAI JANAGANI-2103118
+*/
+
+
+#include <iostream>
+#include <vector>
+using namespace std;
+
+
+template<int b>
+class base_b {
+private:
+  vector<int> arr;
+
+public:
+  base_b() {}
+
+  base_b(int n) {
+  	if (n==0) arr.push_back(n); 
+    while (n > 0) {
+      arr.push_back(n % b);
+      n /= b;
+    }
+  }
+
+  base_b operator+(const base_b& other) const {
+    base_b rslt;
+    int c = 0;
+    int i = 0, j = 0;
+    while (i < arr.size() || j < other.arr.size() || c > 0) {
+      int sum = c;
+      if (i < arr.size()) sum += arr[i];
+      if (j < other.arr.size()) sum += other.arr[j];
+      rslt.arr.push_back(sum % b);
+      c = sum / b;
+      i++; j++;
+    }
+    return rslt;
+  }
+
+
+   base_b operator-(const base_b& other) const {
+    base_b rslt;
+    int brrw = 0;
+    int i = 0, j = 0;
+    while (i < arr.size() || j < other.arr.size()) {
+      int differnce = arr[i] - brrw;
+      if (j < other.arr.size()) differnce -= other.arr[j];
+      if (differnce < 0) {
+        brrw = 1;
+        differnce += b;
+      } else {
+        brrw = 0;
+      }
+      rslt.arr.push_back(differnce);
+      i++; j++;
+    }
+    while (rslt.arr.size() > 1 && rslt.arr.back() == 0) rslt.arr.pop_back();
+    return rslt;
+  }
+
+
+  base_b operator*(const base_b& other) const {
+    base_b rslt;
+    rslt.arr.resize(arr.size() + other.arr.size());
+    for (int i = 0; i < rslt.arr.size(); i++) rslt.arr[i] = 0;
+    for (int i = 0; i < arr.size(); i++) {
+      for (int j = 0; j < other.arr.size(); j++) {
+        rslt.arr[i + j] += arr[i] * other.arr[j];
+        rslt.arr[i + j + 1] += rslt.arr[i + j] / b;
+        rslt.arr[i + j] %= b;
+      }
+    }
+    while (rslt.arr.size() > 1 && rslt.arr.back() == 0) rslt.arr.pop_back();
+    return rslt;
+  }
+
+
+   base_b operator/(const base_b& other) const {
+    base_b rslt;
+    int size = max(arr.size() - other.arr.size() + 1, (size_t)0);
+    rslt.arr.resize(size);
+    for (int i = size - 1; i >= 0; i--) {
+      int lft = 0;
+      for (int j = i; j < arr.size(); j++) lft = lft * b + arr[j];
+      int rht = 0;
+      for (int j = 0; j < other.arr.size() && j <= i; j++) rht = rht * b + other.arr[j];
+      int guess = 0;
+      while (lft >= rht) {
+        lft -= rht;
+        guess++;
+      }
+      rslt.arr[i] = guess;
+    }
+    while (rslt.arr.size() > 1 && rslt.arr.back() == 0) rslt.arr.pop_back();
+    return rslt;
+  }
+
+
+   base_b& operator++() {
+    for (int i = 0; i < arr.size(); i++) {
+      arr[i]++;
+      if (arr[i] < b) break;
+      arr[i] = 0;
+      if (i == arr.size()-1) arr.push_back(1);
+    }
+    return *this;
+  }
+
+  base_b operator++(int) {
+    base_b rslt(*this);
+    ++(*this);
+    return rslt;
+  }
+  
+friend ostream& operator<<(ostream& out, const base_b& val) {
+    for (int i = val.arr.size() - 1; i >= 0; i--) out << val.arr[i];
+    return out;
+  }
+};
+
+int main() {
+  int x,y,z;
+
+  cout<<"Enter the value of x: ";
+  cin>>x;
+  cout<<"Enter the value of y: ";
+  cin>>y;
+  cout<<"Enter the value of z: ";
+  cin>>z;
+
+ 
+
+  base_b<37> X(x), Y(y), Z(z);
+
+  cout << "(x + y) * z = " << (X + Y) * Z << endl;
+  cout << "x++ = " << X++ << endl;
+  cout << "++x = " << ++X << endl;
+
+
+  return 0;
+}
